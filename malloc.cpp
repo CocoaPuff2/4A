@@ -39,14 +39,17 @@ void *malloc_f( long size ) {
 
   // scan each mcb from the top to the bottom of the heap
     for (void *cur = heap_top; cur < heap_end; cur = (void *)((unsigned long long)cur + cur_mcb->size)) {
+        //   let cur_mcb point to each mcb you are scanning
         cur_mcb = (MCB*) cur;
+        //   if cur_mcb->available and cur_mcb->size fits size
         if (cur_mcb->available && cur_mcb->size >= size) {
+            // new_space points to this mcb
             new_space = cur;
+            // todo remove is needed
+            break;
         }
+        cur = (void*)((unsigned long long) cur + cur_mcb->size);
     }
-  //   let cur_mcb point to each mcb you are scanning
-  //   if cur_mcb->available and cur_mcb->size fits size, new_space points to this mcb
-  // TODO Task 1: implement by yourself (up to 15 lines).
 
   // no space found yet
   if ( new_space == NULL ) {
@@ -76,7 +79,6 @@ void *malloc_b( long size ) {
 
   // append an MCB in front of a requested memroy space
   size = size + sizeof( MCB );
-  // todo: started adding here
   // todo remove if needed
   long best_size_sofar = LONG_MAX;
 

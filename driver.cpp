@@ -58,7 +58,7 @@ int main( int argc, char **argv ) {
       chunks[target] = rand_alloc( );
       if ( print == 'p' ) printf( "chuncks[%d] = %p allocated\n", target, chunks[target] );
     }
-    /a/ Case 2: Free (if currently allocated)
+    // Case 2: Free (if currently allocated)
     else if ( alloc_free == 0 && chunks[target] != NULL )  {
       // de-allocation
       ( libc == 'l' ) ? free( chunks[target] ) : free_( chunks[target] );
