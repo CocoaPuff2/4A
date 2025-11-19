@@ -45,6 +45,8 @@ void *malloc_f( long size ) {
         if (cur_mcb->available && cur_mcb->size >= size) {
             // new_space points to this mcb
             new_space = cur;
+            // todo remove if needed
+            cur_mcb->available = false; // marks as used
             break;
         }
         // cur = (void*)((unsigned long long) cur + cur_mcb->size);
@@ -57,7 +59,8 @@ void *malloc_f( long size ) {
 
       // initializes new MCB
       cur_mcb = (MCB*)new_space;
-      cur_mcb->available = 0;
+      // todo change to 0 if needed
+      cur_mcb->available = false;
       cur_mcb->size = size; // stores size
   }
 
@@ -69,7 +72,7 @@ void *malloc_b( long size ) {
   struct MCB *cur_mcb;          // current MCB
   void *new_space = NULL; // this is a pointer to a new memory space allocated for a user
   // added this struct
-  struct MCB *cur_mcb_sofar = NULL;
+  struct  MCB *best_mcb = NULL;
 
     if( !initialized )   {
     // find the end of heap memory, upon an initialization
@@ -89,23 +92,21 @@ void *malloc_b( long size ) {
       //   if cur_mcb->available and cur_mcb->size fits size and cur_mcb->size is the best size so far
       if (cur_mcb->available &&
                 cur_mcb->size >= size &&
-                cur_mcb->size <= best_size_sofar) {
+                cur_mcb->size < best_size_sofar) {
           //  temporarily memorize this best size so far and this best mcb so far
           best_size_sofar = cur_mcb->size;
           // After scan, check the best mcb so far. If it is not null
           //  new_space points to this best mcb so rar
           // new_space = cur;
-          cur_mcb_sofar = cur_mcb;
+          best_mcb = cur_mcb;
       }
-      // move to next block
-      // cur = (void *)((unsigned long long)cur + cur_mcb->size);
     }
 
     // todo remove if needed
     // if found best fit, mark as used so no mem reuse
-    if (cur_mcb_sofar != NULL) {
-        cur_mcb_sofar->available = false;
-        new_space = (void*)cur_mcb_sofar;
+    if (best_mcb != NULL) {
+        best_mcb->available = false;
+        new_space = (void*)best_mcb;
 
     }
   // no space found yet? Request OS memory
@@ -115,7 +116,8 @@ void *malloc_b( long size ) {
 
       // initializes new MCB
       cur_mcb = (MCB*)new_space;
-      cur_mcb->available = 0;
+      // todo change to 0 if needed
+      cur_mcb->available = false;
       cur_mcb->size = size; // stores size
   }
 
