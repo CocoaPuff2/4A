@@ -17,7 +17,7 @@ void free_( void *dealloc_space ) {
   MCB *mcb;
 
   // locate this partition's mcb address from dealloc_space
-  // TODO Task 4: implement by yourself (just in one line)
+  //  Task 4: implement by yourself (just in one line)
   mcb = (MCB*)((unsigned long long)dealloc_space - sizeof(MCB));
   mcb->available = true;
   return;
@@ -45,10 +45,9 @@ void *malloc_f( long size ) {
         if (cur_mcb->available && cur_mcb->size >= size) {
             // new_space points to this mcb
             new_space = cur;
-            // todo remove is needed
             break;
         }
-        cur = (void*)((unsigned long long) cur + cur_mcb->size);
+        // cur = (void*)((unsigned long long) cur + cur_mcb->size);
     }
 
   // no space found yet
@@ -69,8 +68,10 @@ void *malloc_f( long size ) {
 void *malloc_b( long size ) {
   struct MCB *cur_mcb;          // current MCB
   void *new_space = NULL; // this is a pointer to a new memory space allocated for a user
+  // added this struct
+  struct MCB *cur_mcb_sofar = NULL;
 
-  if( !initialized )   {
+    if( !initialized )   {
     // find the end of heap memory, upon an initialization
     heap_end = sbrk( 0 );
     heap_top = heap_end;
@@ -79,7 +80,6 @@ void *malloc_b( long size ) {
 
   // append an MCB in front of a requested memroy space
   size = size + sizeof( MCB );
-  // todo remove if needed
   long best_size_sofar = LONG_MAX;
 
   // scan each mcb from top to bottom of heap
@@ -94,13 +94,20 @@ void *malloc_b( long size ) {
           best_size_sofar = cur_mcb->size;
           // After scan, check the best mcb so far. If it is not null
           //  new_space points to this best mcb so rar
-          new_space = cur;
+          // new_space = cur;
+          cur_mcb_sofar = cur_mcb;
       }
       // move to next block
-      cur = (void *)((unsigned long long)cur + cur_mcb->size);
+      // cur = (void *)((unsigned long long)cur + cur_mcb->size);
     }
-  
 
+    // todo remove if needed
+    // if found best fit, mark as used so no mem reuse
+    if (cur_mcb_sofar != NULL) {
+        cur_mcb_sofar->available = false;
+        new_space = (void*)cur_mcb_sofar;
+
+    }
   // no space found yet? Request OS memory
   if ( new_space == NULL ) {
       new_space = heap_end;
