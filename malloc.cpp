@@ -45,11 +45,9 @@ void *malloc_f( long size ) {
         if (cur_mcb->available && cur_mcb->size >= size) {
             // new_space points to this mcb
             new_space = cur;
-            // todo remove if needed
             cur_mcb->available = false; // marks as used
             break;
         }
-        // cur = (void*)((unsigned long long) cur + cur_mcb->size);
     }
 
   // no space found yet
@@ -59,7 +57,6 @@ void *malloc_f( long size ) {
 
       // initializes new MCB
       cur_mcb = (MCB*)new_space;
-      // todo change to 0 if needed
       cur_mcb->available = false;
       cur_mcb->size = size; // stores size
   }
@@ -102,7 +99,6 @@ void *malloc_b( long size ) {
       }
     }
 
-    // todo remove if needed
     // if found best fit, mark as used so no mem reuse
     if (best_mcb != NULL) {
         best_mcb->available = false;
@@ -116,7 +112,6 @@ void *malloc_b( long size ) {
 
       // initializes new MCB
       cur_mcb = (MCB*)new_space;
-      // todo change to 0 if needed
       cur_mcb->available = false;
       cur_mcb->size = size; // stores size
   }
